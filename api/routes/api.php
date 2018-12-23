@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use Laravel\Passport\Passport;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,4 +17,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Passport::routes(function($router){
+    Route::post('/token', [
+        'uses' => 'AccessTokenController@issueToken',
+        'as' => 'passport.token',
+        'middleware' => 'throttle',
+    ]);
+},['prefix'=>'user']);
+//Route::post('/user/token','Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 Route::get('message',"MessageController@index");
