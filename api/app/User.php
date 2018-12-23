@@ -10,6 +10,10 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
+
+    public function findForPassport($username) {
+        return $this->where('name', $username)->first();
+    }
     /**
      * The attributes that are mass assignable.
      *
