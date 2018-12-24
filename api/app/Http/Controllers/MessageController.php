@@ -7,62 +7,40 @@ use App\Message;
 use App\Http\Resources\MessageResource;
 use App\Http\Resources\MessageCollection;
 use \Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use App\Chat;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $messages = Message::where('to_id','1')->get();
-        return new MessageCollection(new Collection($messages));
+    public function __construct(){
+        $this->middleware('auth:api');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function send(Request $request){
+        $data = $request->json()->all();
+        $chat_id=$data['chat_id'];
+        $text_message = $data['message'];
+        $user_id = Auth::user()->id;
+        $chat=Chat::where('id',$chat_id)->first();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        if ($chat && ($chat->from_id==$user_id || $chat->to_id==$user_id)){
+            $message=new Message();
+            $message->chat_id=$chat_id;
+            $message->message=$text_message;
+            $message->save();
+            return response()->json([
+                "status" => 1,
+                "response" => [
+                    "message"=>"Message sended"
+                ]  
+            ]);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json([
+            "status" => 0,
+            "response" => [
+                "message"=>"Access denied"
+            ]  
+        ]);
     }
 }

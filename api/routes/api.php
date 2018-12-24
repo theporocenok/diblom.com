@@ -28,6 +28,11 @@ Passport::routes(function($router){
     ]);
 },['prefix'=>'user']);
 
+Route::get('/longpolling','LongPollingController@longpolling');
+
+Route::get('/chat.create','ChatController@create');
+Route::get('/chat.acceptChatRequest','ChatController@acceptChatRequest');
+
 //Route::post('/user/token','Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
 //Route::post('/user/token','AuthController@login');
-Route::get('message',"MessageController@index");
+Route::get('message.send',"MessageController@send");

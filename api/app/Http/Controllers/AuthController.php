@@ -36,17 +36,4 @@ class AuthController extends Controller
 
         return response()->json(['status'=> 'success', 'message'=> 'Successfully registration!']);
     }
-
-    public function login(Request $request) {
-    	
-    	$name = request('username');
-    	
-        $password = request('password');
-        $user = User::where('name',$name)->first();
-        //echo $user->password;
-        //echo ': '.Hash::make($request->password, 'time':$user->created_at);
-    	if (Hash::check($request->password, $user->password)){
-    		echo 'ok';
-    	}
-    }
 }
